@@ -1,11 +1,11 @@
 const express = require("express");
-const { requireActiveDevice } = require("../middleware/device");
-const { getPosts, getPost } = require("../controllers/postController");
+const { getPosts, createPost, updatePost, deletePost } = require("../controllers/postController");
 
 const router = express.Router();
 
-router.use(requireActiveDevice);
 router.get("/", getPosts);
-router.get("/:id", getPost);
+router.post("/", createPost);
+router.put("/:id", updatePost);
+router.delete("/:id", deletePost);
 
 module.exports = router;

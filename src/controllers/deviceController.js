@@ -32,8 +32,10 @@ const registerOrActivateDevice = async (req, res, next) => {
 
         res.json({
             deviceId: device.deviceId,
+            subscriptionStatus: device.getSubscriptionStatus(),
             trialStartedAt: device.trialStartedAt,
             trialEndsAt: device.trialEndsAt,
+            trialRemainingMs: device.getTrialRemainingMs(),
             lifetimePremiumAt: device.lifetimePremiumAt,
             isActivated,
         });

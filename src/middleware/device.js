@@ -11,7 +11,15 @@ const requireActiveDevice = async (req, res, next) => {
 
         const isActivated = device.refreshActivation();
         await device.save();
-        if (!isActivated) return res.status(403).json({ message: "Free trial has ended", isActivated: false });
+        if (!isActivated) {
+            return res.status(403).json({
+                message: "Free trial has ended",
+                subscriptionStatus: "expired",
+                trialEndsAt: device.trialEndsAt,
+                lifetimePremiumAt: device.lifetimePremiumAt,
+                isActivated: false,
+            });
+        }
 
         req.device = device;
         next();
@@ -32,8 +40,10 @@ const getDeviceStatusByParam = async (req, res, next) => {
         await device.save();
         res.locals.deviceStatus = {
             deviceId: device.deviceId,
+            subscriptionStatus: device.getSubscriptionStatus(),
             trialStartedAt: device.trialStartedAt,
             trialEndsAt: device.trialEndsAt,
+            trialRemainingMs: device.getTrialRemainingMs(),
             lifetimePremiumAt: device.lifetimePremiumAt,
             isActivated,
         };

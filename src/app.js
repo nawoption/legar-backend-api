@@ -8,6 +8,7 @@ const deviceRoutes = require("./routes/deviceRoutes");
 const postRoutes = require("./routes/postRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const warningRoutes = require("./routes/warningRoutes");
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/api/devices", deviceRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/warnings", warningRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: "Route not found" });

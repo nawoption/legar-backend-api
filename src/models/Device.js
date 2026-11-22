@@ -24,10 +24,23 @@ const deviceSchema = new mongoose.Schema(
 deviceSchema.index({ trialEndsAt: 1 });
 
 deviceSchema.methods.refreshActivation = function () {
-    const stillInTrial = this.trialEndsAt && this.trialEndsAt > new Date();
+    const now = new Date();
+    const stillInTrial = this.trialEndsAt && this.trialEndsAt > now;
     const activated = Boolean(this.lifetimePremiumAt) || stillInTrial;
+
     this.isActivated = activated;
     return activated;
+};
+
+deviceSchema.methods.getSubscriptionStatus = function () {
+    if (this.lifetimePremiumAt) return "lifetime";
+    if (this.trialEndsAt && this.trialEndsAt > new Date()) return "trial";
+    return "expired";
+};
+
+deviceSchema.methods.getTrialRemainingMs = function () {
+    if (this.lifetimePremiumAt || !this.trialEndsAt) return 0;
+    return Math.max(this.trialEndsAt.getTime() - Date.now(), 0);
 };
 
 module.exports = mongoose.model("Device", deviceSchema);

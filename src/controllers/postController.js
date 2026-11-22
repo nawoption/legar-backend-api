@@ -3,37 +3,8 @@ const Post = require("../models/Post");
 
 const getPosts = async (req, res, next) => {
     try {
-        const page = Math.max(Number(req.query.page) || 1, 1);
-        const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
-        const filter = {};
-
-        if (req.query.isActive !== undefined) filter.isActive = req.query.isActive === "true";
-        if (req.query.search) {
-            filter.$or = [
-                { title: { $regex: req.query.search, $options: "i" } },
-                { description: { $regex: req.query.search, $options: "i" } },
-            ];
-        }
-
-        const [posts, total] = await Promise.all([
-            Post.find(filter)
-                .sort({ createdAt: -1 })
-                .skip((page - 1) * limit)
-                .limit(limit),
-            Post.countDocuments(filter),
-        ]);
-
-        res.json({ posts, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
-    } catch (error) {
-        next(error);
-    }
-};
-
-const getPost = async (req, res, next) => {
-    try {
-        const post = await Post.findById(req.params.id);
-        if (!post) return res.status(404).json({ message: "Post not found" });
-        res.json(post);
+        const posts = await Post.find();
+        res.json(posts);
     } catch (error) {
         next(error);
     }
@@ -78,4 +49,4 @@ const deletePost = async (req, res, next) => {
     }
 };
 
-module.exports = { getPosts, getPost, createPost, updatePost, deletePost };
+module.exports = { getPosts, createPost, updatePost, deletePost };
